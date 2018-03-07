@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin version="php">
-<id>os_alioss_free</id>
-<name>阿里云OSS - Free</name>
-<url>https://oss.so/</url>
-<note>阿里云OSS插件2017年更新，免费版本</note>
-<description>阿里云OSS插件2017年更新，免费版本</description>
+<id>os_wxapp_one</id>
+<name>微信小程序 - one</name>
+<url>https://www.os369.com/app/os_wxapp_one</url>
+<note>微信小程序 - one</note>
+<description>微信小程序 - one</description>
 <path>main.php</path>
 <include>include.php</include>
 <level>1</level>
@@ -20,10 +20,10 @@
 </source>
 <adapted>150101</adapted>
 <version>1.0</version>
-<pubdate>2017-10-20</pubdate>
-<modified>2017-10-21</modified>
+<pubdate>2018-03-07</pubdate>
+<modified>2018-03-07</modified>
 <price>0</price>
-<phpver>5.3</phpver>
+<phpver>5.4</phpver>
 <advanced>
   <dependency></dependency>
   <rewritefunctions></rewritefunctions>
