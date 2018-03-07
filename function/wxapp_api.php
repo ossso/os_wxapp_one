@@ -55,6 +55,9 @@ function os_wxapp_one_api_v1($type, $param, &$json = []) {
         case 'list':
             os_wxapp_one_APIList($json);
         break;
+        case 'catelist':
+            os_wxapp_one_APICateList($json);
+        break;
         default:
             $json['code'] = -2;
             $json['message'] = "未找到定义接口";
@@ -73,6 +76,33 @@ function os_wxapp_one_APIHome(&$json = []) {
 
     $result = os_wxapp_one_JSON_GetArticleList(10, null, $page);
 
+    $tuis = array();
+    $w = array();
+    $w[] = array("=", "log_Status", "0");
+    $list = array();
+    if (isset($zbp->Config('os_wxapp_one')->home_tuis)) {
+        $list = explode(",", $zbp->Config('os_wxapp_one')->home_tuis);
+    }
+    if (count($list) > 0) {
+        $w[] = array("IN", "log_ID", $list);
+        $zbp->GetArticleList(null, $w);
+        try {
+            foreach ($list as $id) {
+                if ($zbp->posts[(int)$id]) {
+                    $tuis[$id] = os_wxapp_one_JSON_PostToJson($zbp->posts[(int)$id]);
+                }
+            }
+        } catch (\Exception $e) {}
+    } else {
+        $w[] = array(">", "log_PostTime", time() - 365 * 24 * 60 * 60);
+        $order = array("log_ViewNums" => "DESC");
+        $list = $zbp->GetArticleList(null, $w, $order, array(4));
+        foreach ($list as $item) {
+            $tuis[] = os_wxapp_one_JSON_PostToJson($item);
+        }
+    }
+    $result->medias = $tuis;
+
     $json['code'] = 100000;
     $json['result'] = $result;
 }
@@ -87,14 +117,40 @@ function os_wxapp_one_APIList(&$json = []) {
     $page = (int)$page>0 ? (int)$page : 1;
 
     $cateid = GetVars("cateid", "GET");
-    
+
     if (empty($cateid)) {
         $json['code'] = 200100;
         $json['message'] = "分类ID异常";
         return false;
     }
+    $cate = $zbp->GetCategoryByID((int) $cateid);
+    if (empty($cate->ID)) {
+        $json['code'] = 200101;
+        $json['message'] = "分类不存在";
+        return false;
+    }
 
     $result = os_wxapp_one_JSON_GetArticleList(10, $cateid, $page, true);
+    $result->cate = os_wxapp_one_JSON_CateToJson($cate);
+
+    $json['code'] = 100000;
+    $json['result'] = $result;
+}
+
+/**
+ * 分类列表
+ */
+function os_wxapp_one_APICateList(&$json = []) {
+    global $zbp;
+
+    $w = array();
+    $w[] = array("=", "cate_ParentID", "0");
+    $cates = $zbp->GetCategoryList(null, $w, array("cate_Order" => "ASC"));
+    $result = array();
+
+    foreach ($cates as $item) {
+        $result[] = os_wxapp_one_JSON_CateToJson($item);
+    }
 
     $json['code'] = 100000;
     $json['result'] = $result;
