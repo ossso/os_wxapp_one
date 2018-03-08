@@ -36,6 +36,7 @@ function os_wxapp_one_CheckSession(&$json = []) {
     if ($mem->ID == 0) {
         $mem->Name = $wxUser->Nickname;
         $mem->Avatar = $wxUser->Avatar;
+        $mem->Metas->os_wxapp_avatar = $wxUser->Avatar;
     }
     return $mem;
 }
@@ -46,11 +47,11 @@ function os_wxapp_one_CheckSession(&$json = []) {
 function os_wxapp_one_Login(&$json = []) {
     global $zbp;
     // 获取传入数据
-    $code = GetVars('code', 'POST');
-    $rawData = GetVars('rawData', 'POST');
-    $signature = GetVars('signature', 'POST');
-    $encryptedData = GetVars('encryptedData', 'POST');
-    $iv = GetVars('iv', 'POST');
+    $code = trim(GetVars('code', 'POST'));
+    $rawData = trim(GetVars('rawData', 'POST'));
+    $signature = trim(GetVars('signature', 'POST'));
+    $encryptedData = trim(GetVars('encryptedData', 'POST'));
+    $iv = trim(GetVars('iv', 'POST'));
 
     $params = array(
         "appid"    => $zbp->Config('os_wxapp_one')->appid,
@@ -106,11 +107,8 @@ function os_wxapp_one_Login(&$json = []) {
     $result->sessionid = $sessionid;
     if ($u->UID > 0) {
         $mem = new Member;
-        $mem->LoadInfoByID($mem);
-        $result->userinfo = (Object) array(
-            "Nickname" => $mem->StaticName,
-            "Avatar"   => $mem->Avatar,
-        );
+        $mem->LoadInfoByID($u->UID);
+        $result->userinfo = os_wxapp_one_JSON_UserToJson($mem);
     } else {
         $result->userinfo = (Object) array(
             "Nickname" => $u->Nickname,

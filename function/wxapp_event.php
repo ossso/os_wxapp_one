@@ -86,3 +86,66 @@ function os_wxapp_one_Event_wxappSession($wxUser, $token) {
     $wxSession->UpdateTime = time();
     $wxSession->Save();
 }
+
+/**
+ * 绑定网站用户
+ */
+function os_wxapp_one_EventBindUser() {
+    global $zbp;
+    $status = os_wxapp_one_EventUserLogin();
+    if (!$status) {
+        return $status;
+    }
+    $sessionid = GetVars('sessionid', 'POST');
+    $wxSession = new WXAppOneSession;
+    $wxSession->LoadInfoByToken($sessionid);
+    $wxSession->UID = $zbp->user->ID;
+    $wxSession->Save();
+    $wxUser = new WXAppOneUser;
+    $wxUser->LoadInfoByID($wxSession->WXUID);
+    $wxUser->UID = $zbp->user->ID;
+    $wxUser->Save();
+    $zbp->user->Metas->os_wxapp_avatar = $wxUser->Avatar;
+    $zbp->user->Save();
+
+    return true;
+}
+
+/**
+ * 用户登录验证
+ */
+function os_wxapp_one_EventUserLogin() {
+    global $zbp;
+    $username = trim(GetVars("username", "POST"));
+    $password = trim(GetVars("password", "POST"));
+    if ($zbp->Verify_MD5(GetVars('username', 'POST'), GetVars('password', 'POST'), $m)) {
+        $zbp->user = $m;
+        $un = $m->Name;
+        $ps = $m->PassWord_MD5Path;
+        if ($zbp->user->Status != 0) {
+            return false;
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * 解除绑定网站用户
+ */
+function os_wxapp_one_EventUnBindUser() {
+    global $zbp;
+    $sessionid = GetVars('sessionid', 'POST');
+
+    $wxSession = new WXAppOneSession;
+    $wxSession->LoadInfoByToken($sessionid);
+    $wxSession->UID = 0;
+    $wxSession->Save();
+    $wxUser = new WXAppOneUser;
+    $wxUser->LoadInfoByID($wxSession->WXUID);
+    $wxUser->UID = 0;
+    $wxUser->Save();
+
+    return true;
+}

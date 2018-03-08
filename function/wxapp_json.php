@@ -204,7 +204,11 @@ function os_wxapp_one_JSON_UserToJson($item, $hasPrivacy = false) {
     $data->Nickname = $item->StaticName;
     $data->StaticName = $item->StaticName;
     // 获取头像
-    $data->Avatar = $item->Avatar;
+    if ($item->ID == 0 && $item->Metas->os_wxapp_avatar) {
+        $data->Avatar = $item->Metas->os_wxapp_avatar;
+    } else {
+        $data->Avatar = $item->Avatar;
+    }
 
     return $data;
 }

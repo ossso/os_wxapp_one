@@ -67,11 +67,20 @@ function os_wxapp_one_api_v1($type, $param, &$json = []) {
         case 'comment':
             os_wxapp_one_APIComment($json);
         break;
+        case 'postcomment':
+            os_wxapp_one_APIPostComment($json);
+        break;
         case 'user':
             os_wxapp_one_APIUserInfo($json);
         break;
         case 'login':
             os_wxapp_one_Login($json);
+        break;
+        case 'bind':
+            os_wxapp_one_APIBind($json);
+        break;
+        case 'unbind':
+            os_wxapp_one_APIUnBind($json);
         break;
         default:
             $json['code'] = -2;
@@ -275,6 +284,106 @@ function os_wxapp_one_APIComment(&$json = []) {
 }
 
 /**
+ * 提交评论
+ */
+function os_wxapp_one_APIPostComment(&$json = []) {
+    global $zbp;
+
+    $mem = os_wxapp_one_CheckSession($json);
+    if (!$mem) {
+        return false;
+    }
+
+    $postid = GetVars("postid", "POST");
+    $replyid = GetVars("replyid", "POST");
+    $content = GetVars("content", "POST");
+
+    $postid = TransferHTML($postid, '[nohtml]');
+    $replyid = TransferHTML($replyid, '[nohtml]');
+    $content = TransferHTML($content, '[nohtml]');
+
+    if (empty($replyid)) {
+        $replyid = 0;
+    }
+
+    if (mb_strlen($content, 'utf-8') < 1) {
+        $json['code'] = 200500;
+        $json['message'] = "留言正文不能为空";
+        return false;
+    }
+
+    $_POST = array();
+
+    $_POST['LogID'] = $postid;
+    if ($replyid == 0) {
+        $_POST['RootID'] = 0;
+        $_POST['ParentID'] = 0;
+    } else {
+        $_POST['ParentID'] = $replyid;
+        $c = $zbp->GetCommentByID($replyid);
+        $_POST['RootID'] = Comment::GetRootID($c->ID);
+    }
+
+    $_POST['AuthorID'] = $mem->ID;
+    $_POST['Name'] = $mem->Name;
+    $_POST['Email'] = $mem->Email;
+    $_POST['HomePage'] = $mem->HomePage;
+    $_POST['meta_os_wxapp_status'] = 1;
+    $_POST['meta_os_wxapp_avatar'] = $mem->Metas->os_wxapp_avatar;
+
+    $_POST['Content'] = $content;
+    $_POST['PostTime'] = Time();
+    $_POST['IP'] = GetGuestIP();
+    $_POST['Agent'] = GetGuestAgent();
+
+    $cmt = new Comment;
+
+    foreach ($zbp->datainfo['Comment'] as $key => $value) {
+        if ($key == 'ID' || $key == 'Meta') { continue; }
+        if ($key == 'IsChecking') { continue; }
+
+        if (isset($_POST[$key])) {
+            $cmt->$key = GetVars($key, 'POST');
+        }
+    }
+
+    if ($zbp->option['ZC_COMMENT_AUDIT'] && !$zbp->CheckRights('root')) {
+        $cmt->IsChecking = true;
+    }
+
+    foreach ($GLOBALS['hooks']['Filter_Plugin_PostComment_Core'] as $fpname => &$fpsignal) {
+        $fpname($cmt, $json);
+    }
+
+    FilterComment($cmt);
+    FilterMeta($cmt);
+
+    $cmt->Save();
+
+    $json['code'] = 100000;
+    $json['result'] = os_wxapp_one_JSON_CommentToJson($cmt);
+
+    if ($cmt->IsChecking) {
+        CountCommentNums(0, +1);
+        $json['message'] = "成功发表留言，但需要审核以后才能显示";
+        return false;
+    }
+
+    CountPostArray(array($cmt->LogID), +1);
+    CountCommentNums(+1, 0);
+
+    $zbp->AddBuildModule('comments');
+
+    $zbp->comments[$cmt->ID] = $cmt;
+
+    foreach ($GLOBALS['hooks']['Filter_Plugin_PostComment_Succeed'] as $fpname => &$fpsignal) {
+        $fpname($cmt, $json);
+    }
+
+    return true;
+}
+
+/**
  * 获取用户信息
  */
 function os_wxapp_one_APIUserInfo(&$json = []) {
@@ -287,4 +396,49 @@ function os_wxapp_one_APIUserInfo(&$json = []) {
     $json['result'] = os_wxapp_one_JSON_UserToJson($mem);
 
     return true;
+}
+
+/**
+ * 绑定网站用户
+ */
+function os_wxapp_one_APIBind(&$json = []) {
+    global $zbp;
+    $mem = os_wxapp_one_CheckSession($json);
+    if (!$mem) {
+        return false;
+    }
+    if ($mem->ID > 0) {
+        $json['code'] = 200600;
+        $json['message'] = "已有绑定账户";
+        return false;
+    }
+    $status = os_wxapp_one_EventBindUser();
+    if ($status) {
+        $json['code'] = 100000;
+        $json['result'] = $zbp->user->ID;
+        return true;
+    } else {
+        $json['code'] = 200601;
+        $json['result'] = "绑定失败，请检查您的账户或密码";
+        return false;
+    }
+}
+
+/**
+ * 绑定网站用户
+ */
+function os_wxapp_one_APIUnBind(&$json = []) {
+    global $zbp;
+    $mem = os_wxapp_one_CheckSession($json);
+    if (!$mem) {
+        return false;
+    }
+    if ($mem->ID == 0) {
+        $json['code'] = 100000;
+        $json['result'] = "解绑成功";
+        return true;
+    }
+    os_wxapp_one_EventUnBindUser();
+    $json['code'] = 100000;
+    $json['result'] = "解绑成功";
 }
