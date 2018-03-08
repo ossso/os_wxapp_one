@@ -6,6 +6,7 @@ class WXAppOneSession extends Base {
     public function __construct() {
         global $zbp;
         parent::__construct($zbp->table['os_wxapp_session'], $zbp->datainfo['os_wxapp_session'], __CLASS__);
+        $this->UpdateTime = time();
     }
 
     /**

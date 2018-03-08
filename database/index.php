@@ -37,7 +37,7 @@ $os_wxapp_one_database = array(
         ),
     ),
 );
-foreach ($os369_database as $k => $v) {
+foreach ($os_wxapp_one_database as $k => $v) {
     $table[$k] = $v['name'];
     $datainfo[$k] = $v['info'];
 }

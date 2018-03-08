@@ -44,3 +44,45 @@ function os_wxapp_one_Event_GetArticleCover($article, $num = 1) {
         return array($zbp->host.'zb_users/plugin/os_wxapp_one/images/noimg.png');
     }
 }
+
+/**
+ * 登录/注册小程序用户
+ */
+function os_wxapp_one_Event_wxappLogin($data, $sessionKey) {
+    global $zbp;
+    $openid = $data->openId;
+    $u = new WXAppOneUser;
+    $u->LoadInfoByOpenID($openid);
+    if ($u->ID == 0) {
+        $u->OpenID = $openid;
+    }
+    if (isset($data->unionId)) {
+        $u->UnionID = $data->unionId;
+    }
+    $u->Nickname = $data->nickName;
+    $u->Avatar = $data->avatarUrl;
+    $u->SessionKey = $sessionKey;
+    $u->UpdateTime = time();
+    $u->Save();
+
+    return $u;
+}
+
+/**
+ * 记录用户的sessionid
+ */
+function os_wxapp_one_Event_wxappSession($wxUser, $token) {
+    global $zbp;
+    $wxSession = new WXAppOneSession;
+    $wxSession->LoadInfoByWXUID($wxUser->ID);
+    if ($wxSession->ID == 0) {
+        $wxSession->WXUID = $wxUser->ID;
+    }
+    // 当用户ID不为0时，更新到记录中
+    if ($wxSession->UID == 0 && $wxUser->UID != 0) {
+        $wxSession->UID = $wxUser->UID;
+    }
+    $wxSession->Token = $token;
+    $wxSession->UpdateTime = time();
+    $wxSession->Save();
+}

@@ -2,6 +2,7 @@
 
 include_once __DIR__.'/database/index.php';
 include_once __DIR__.'/function/main.php';
+include_once __DIR__.'/third_libs/wxapp/wxBizDataCrypt.php';
 
 #注册插件
 RegisterPlugin("os_wxapp_one", "ActivePlugin_os_wxapp_one");

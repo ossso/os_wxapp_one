@@ -59,15 +59,13 @@ function os_wxapp_one_JSON_GetPost($id) {
         $post->ViewNums += 1;
         $post->Save();
         $data = os_wxapp_one_JSON_PostToJson($post, true);
-        // 相关文章
-        $relatedList = $post->RelatedList;
-        $data->RelatedList = array();
-        $i = 0;
-        foreach ($relatedList as $item) {
-            $i++;
-            $data->RelatedList[] = os_wxapp_one_JSON_PostToJson($item);
-            if ($i >= 4) {
-                break;
+        if ($post->Type == 0) {
+            // 相关文章
+            $relatedList = $post->RelatedList;
+            $relatedList = array_slice($relatedList, 0, 4);
+            $data->RelatedList = array();
+            foreach ($relatedList as $item) {
+                $data->RelatedList[] = os_wxapp_one_JSON_PostToJson($item);
             }
         }
         return $data;
@@ -199,7 +197,7 @@ function os_wxapp_one_JSON_UserToJson($item, $hasPrivacy = false) {
         unset($data->Name);
         unset($data->PostTime);
         unset($data->Uploads);
-        unset($data->Level);
+        // unset($data->Level);
         unset($data->Status);
     }
     // 处理昵称
