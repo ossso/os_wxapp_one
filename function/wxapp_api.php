@@ -6,7 +6,10 @@ function os_wxapp_one_WatchApi($url) {
     global $zbp, $os_wxapp_one;
     $status = strripos($url, '/os_wxapi');
     if ($status !== 0) {
-        return false;
+        $status2 = strripos($url, '/index.php/os_wxapi');
+        if ($status2 !== 0) {
+            return false;
+        }
     }
 
     // 匹配路由
@@ -32,6 +35,34 @@ function os_wxapp_one_WatchApi($url) {
     switch ($version) {
         case 'v1':
             os_wxapp_one_api_v1($type, $param, $json);
+        break;
+        default:
+            $json['code'] = -1;
+            $json['message'] = "未找到定义接口";
+        break;
+    }
+
+    echo json_encode($json);
+    exit;
+}
+
+/**
+ * 监听cmd接口上api
+ */
+function os_wxapp_one_WatchCmdApi() {
+    global $zbp;
+    $action = GetVars('act','GET');
+    if ($action != "os_wxapi") {
+        return false;
+    }
+    $version = GetVars('v','GET');
+    $mode = GetVars('mode','GET');
+
+    $json = array();
+
+    switch ($version) {
+        case 'v1':
+            os_wxapp_one_api_v1($mode, null, $json);
         break;
         default:
             $json['code'] = -1;
