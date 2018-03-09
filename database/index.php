@@ -36,6 +36,22 @@ $os_wxapp_one_database = array(
             'Meta'        => array('wxapp_session_Meta','string','',''),
         ),
     ),
+
+    /**
+     * Swiper管理表
+     */
+    'os_wxapp_one_swiper'   => array(
+        'name'           => '%pre%os_wxapp_one_swiper',
+        'info'           => array(
+            'ID'          => array('wxapp_swiper_ID','integer','',0),
+            'Related'     => array('wxapp_swiper_Related','string',255,''),
+            'Type'        => array('wxapp_swiper_Type','string',255,''),
+            'Imgurl'      => array('wxapp_swiper_Imgurl','string',255,''),
+            'Order'       => array('wxapp_swiper_Order','integer','',0),
+            'Status'      => array('wxapp_swiper_Status','integer','',0),
+            'Meta'        => array('wxapp_swiper_Meta','string','',''),
+        ),
+    ),
 );
 foreach ($os_wxapp_one_database as $k => $v) {
     $table[$k] = $v['name'];

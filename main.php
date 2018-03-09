@@ -25,6 +25,18 @@ require $blogpath . 'zb_system/admin/admin_top.php';
     <div class="divHeader"><?php echo $blogtitle;?></div>
     <div id="divMain2">
         <a target="_blank" href="https://www.os369.com/app/item/os_wxapp_one#help" style="display: block; width: 100px; height: 32px; line-height: 32px; text-align: center; color: #fff; background: #3a6ea5;">配置帮助</a>
+        <div class="tips">
+            <?php
+                $hasOpenSSL = extension_loaded("openssl");
+                if (empty($hasOpenSSL)) {
+                    echo '<p style="line-height: 40px; color: #f00; font-size: 16px; font-weight: 700;">Error: 请您开启PHP扩展的openssl</p>';
+                }
+                $hasCurl = extension_loaded("curl");
+                if (empty($hasCurl)) {
+                    echo '<p style="line-height: 40px; color: #f00; font-size: 16px; font-weight: 700;">Error: 请您开启PHP扩展的curl</p>';
+                }
+            ?>
+        </div>
         <form action="./save.php" method="post">
             <table border="1" class="tableFull tableBorder tableBorder-thcenter" style="max-width: 1000px">
                 <thead>
@@ -47,13 +59,25 @@ require $blogpath . 'zb_system/admin/admin_top.php';
                         </td>
                     </tr>
                     <tr>
-                        <td>首页推荐</td>
+                        <td>首页推荐文章</td>
                         <td>
                             <input name="tuis" type="text" class="edit-input" value="<?php echo $zbp->Config('os_wxapp_one')->tuis; ?>" placeholder="填写文章的ID，用英文逗号分隔" />
                         </td>
                     </tr>
                     <tr>
-                        <td>分类阅读</td>
+                        <td>首页过滤分类</td>
+                        <td>
+                            <input name="filter" type="text" class="edit-input" value="<?php echo $zbp->Config('os_wxapp_one')->filter; ?>" placeholder="填写分类的ID，用英文逗号分隔" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>首页过滤文章</td>
+                        <td>
+                            <input name="filter_art" type="text" class="edit-input" value="<?php echo $zbp->Config('os_wxapp_one')->filter_art; ?>" placeholder="填写文章的ID，用英文逗号分隔" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>分类阅读中心</td>
                         <td>
                             <input name="cates" type="text" class="edit-input" value="<?php echo $zbp->Config('os_wxapp_one')->cates; ?>" placeholder="填写分类的ID，用英文逗号分隔" />
                         </td>

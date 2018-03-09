@@ -64,6 +64,9 @@ function os_wxapp_one_api_v1($type, $param, &$json = []) {
         case 'article':
             os_wxapp_one_APIArticle($json);
         break;
+        case 'page':
+            os_wxapp_one_APIPage($json);
+        break;
         case 'comment':
             os_wxapp_one_APIComment($json);
         break;
@@ -93,31 +96,47 @@ function os_wxapp_one_api_v1($type, $param, &$json = []) {
  * 首页数据输出
  */
 function os_wxapp_one_APIHome(&$json = []) {
-    global $zbp;
+    global $zbp, $os_wxapp_one;
 
     $page = GetVars("page", "GET");
     $page = (int)$page>0 ? (int)$page : 1;
 
-    $result = os_wxapp_one_JSON_GetArticleList(10, null, $page);
+    // 首页过滤分类
+    $filter = array();
+    if ($zbp->Config('os_wxapp_one')->filter) {
+        $list = explode(",", $zbp->Config('os_wxapp_one')->filter);
+        foreach ($list as $id) {
+            $filter[] = array("<>", "log_CateID", $id);
+        }
+    }
+    // 首页过滤文章
+    $filter_art = array();
+    if ($zbp->Config('os_wxapp_one')->filter_art) {
+        $list = explode(",", $zbp->Config('os_wxapp_one')->filter_art);
+        foreach ($list as $id) {
+            $filter_art[] = array("<>", "log_ID", $id);
+        }
+    }
 
+    $result = os_wxapp_one_JSON_GetArticleList(10, null, $page, $filter, $filter_art);
+
+    // 首页加载其它内容
     if ($page == 1) {
         $tuis = array();
         $w = array();
         $w[] = array("=", "log_Status", "0");
         $list = array();
-        if (isset($zbp->Config('os_wxapp_one')->home_tuis)) {
-            $list = explode(",", $zbp->Config('os_wxapp_one')->home_tuis);
+        if ($zbp->Config('os_wxapp_one')->tuis) {
+            $list = explode(",", $zbp->Config('os_wxapp_one')->tuis);
         }
         if (count($list) > 0) {
             $w[] = array("IN", "log_ID", $list);
             $zbp->GetArticleList(null, $w);
-            try {
-                foreach ($list as $id) {
-                    if ($zbp->posts[(int)$id]) {
-                        $tuis[$id] = os_wxapp_one_JSON_PostToJson($zbp->posts[(int)$id]);
-                    }
+            foreach ($list as $v) {
+                if (isset($zbp->posts[$v])) {
+                    $tuis[] = os_wxapp_one_JSON_PostToJson($zbp->posts[$v]);
                 }
-            } catch (\Exception $e) {}
+            }
         } else {
             $w[] = array(">", "log_PostTime", time() - 365 * 24 * 60 * 60);
             $order = array("log_ViewNums" => "DESC");
@@ -127,6 +146,16 @@ function os_wxapp_one_APIHome(&$json = []) {
             }
         }
         $result->medias = $tuis;
+
+        $swipers = $os_wxapp_one->GetSwiperList(null, array(
+            array("=", "wxapp_swiper_Status", "0"),
+        ), array("wxapp_swiper_Order" => "DESC"));
+        if (count($swipers) > 0) {
+            $result->swiper = array();
+            foreach ($swipers as $item) {
+                $result->swiper[] = os_wxapp_one_JSON_SwiperToJson($item);
+            }
+        }
     }
 
     $json['code'] = 100000;
@@ -221,6 +250,20 @@ function os_wxapp_one_APICateList(&$json = []) {
 
     $w = array();
     $w[] = array("=", "cate_ParentID", "0");
+
+    if ($zbp->Config('os_wxapp_one')->cates) {
+        $list = explode(",", $zbp->Config('os_wxapp_one')->cates);
+        $show = array();
+        foreach ($list as $v) {
+            $num = (int) $v;
+            if ($num > 0) {
+                array_push($show, $v);
+            } else {
+                $w[] = array("<>", "cate_ID", abs($v));
+            }
+        }
+    }
+
     $cates = $zbp->GetCategoryList(null, $w, array("cate_Order" => "ASC"));
     $result = array();
 
@@ -252,6 +295,33 @@ function os_wxapp_one_APIArticle(&$json = []) {
     if (empty($result)) {
         $json['code'] = 200401;
         $json['message'] = "请求文章不存在";
+        return false;
+    }
+
+    $json['code'] = 100000;
+    $json['result'] = $result;
+
+    return true;
+}
+
+/**
+ * 分类列表
+ */
+function os_wxapp_one_APIPage(&$json = []) {
+    global $zbp;
+
+    $id = GetVars("id", "GET");
+    if (empty($id)) {
+        $json['code'] = 200402;
+        $json['message'] = "页面ID不能为空";
+        return false;
+    }
+
+    $result = os_wxapp_one_JSON_GetPost($id);
+
+    if (empty($result)) {
+        $json['code'] = 200403;
+        $json['message'] = "请求页面不存在";
         return false;
     }
 

@@ -9,6 +9,8 @@ if (!$zbp->CheckPlugin('os_wxapp_one')) {$zbp->ShowError(48);die();}
 $save_param = array(
     "appid",
     "secret",
+    "filter",
+    "filter_art",
     "tuis",
     "cates"
 );

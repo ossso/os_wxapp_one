@@ -248,3 +248,38 @@ function os_wxapp_one_JSON_CommentToJson($item, $hasPrivacy = false) {
 
     return $data;
 }
+
+/**
+ * 转换swiper的JSON
+ */
+function os_wxapp_one_JSON_SwiperToJson($item) {
+    $data = json_decode($item->__toString());
+    $data->Metas = (Object) array();
+    $metas = $item->Meta;
+    $metas = unserialize($metas);
+    if ($metas) {
+        $metas = (array) $metas;
+        foreach ($metas as $k => $v) {
+            $data->Metas->$k = $v;
+            $data->Metas->$k = str_replace('{#ZC_BLOG_HOST#}', $zbp->host, $data->Metas->$k);
+        }
+    }
+    unset($data->Meta);
+
+    switch ($item->Type) {
+        case 'normal':
+            $data->route = null;
+        break;
+        case 'article':
+            $data->route = "/pages/article/index?id="+$item->Related;
+        break;
+        case 'page':
+            $data->route = "/pages/page/index?id="+$item->Related;
+        break;
+        case 'search':
+            $data->route = "/pages/search/index?word="+$item->Related;
+        break;
+    }
+
+    return $data;
+}
