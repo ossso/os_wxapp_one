@@ -179,7 +179,7 @@ function os_wxapp_one_APIHome(&$json = []) {
         $result->medias = $tuis;
 
         $swipers = $os_wxapp_one->GetSwiperList(null, array(
-            array("=", "wxapp_swiper_Status", "0"),
+            array("=", "wxapp_swiper_Status", "1"),
         ), array("wxapp_swiper_Order" => "DESC"));
         if (count($swipers) > 0) {
             $result->swiper = array();

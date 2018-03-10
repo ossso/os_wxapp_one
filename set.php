@@ -6,7 +6,7 @@ $action='root';
 if (!$zbp->CheckRights($action)) {$zbp->ShowError(6);die();}
 if (!$zbp->CheckPlugin('os_wxapp_one')) {$zbp->ShowError(48);die();}
 
-$blogtitle = '微信小程序 ONE 内容配置';
+$blogtitle = '微信小程序 ONE 插件配置';
 require $blogpath . 'zb_system/admin/admin_header.php';
 require $blogpath . 'zb_system/admin/admin_top.php';
 ?>
@@ -23,9 +23,21 @@ require $blogpath . 'zb_system/admin/admin_top.php';
 </style>
 <div id="divMain">
     <div class="divHeader"><?php echo $blogtitle;?></div>
-    <div class="SubMenu"><?php os_wxapp_one_SubMenu(0);?></div>
+    <div class="SubMenu"><?php os_wxapp_one_SubMenu(2);?></div>
     <div id="divMain2">
-        <form action="./save.php?type=base" method="post">
+        <div class="tips">
+            <?php
+                $hasOpenSSL = extension_loaded("openssl");
+                if (empty($hasOpenSSL)) {
+                    echo '<p style="line-height: 40px; color: #f00; font-size: 16px; font-weight: 700;">Error: 请您开启PHP扩展的openssl</p>';
+                }
+                $hasCurl = extension_loaded("curl");
+                if (empty($hasCurl)) {
+                    echo '<p style="line-height: 40px; color: #f00; font-size: 16px; font-weight: 700;">Error: 请您开启PHP扩展的curl</p>';
+                }
+            ?>
+        </div>
+        <form action="./save.php?type=core" method="post">
             <table border="1" class="tableFull tableBorder tableBorder-thcenter" style="max-width: 1000px">
                 <thead>
                     <tr>
@@ -35,27 +47,15 @@ require $blogpath . 'zb_system/admin/admin_top.php';
                 </thead>
                 <tbody>
                     <tr>
-                        <td>首页推荐文章</td>
+                        <td>AppID</td>
                         <td>
-                            <input name="tuis" type="text" class="edit-input" value="<?php echo $zbp->Config('os_wxapp_one')->tuis; ?>" placeholder="填写文章的ID，用英文逗号分隔" />
+                            <input name="appid" type="text" class="edit-input" value="<?php echo $zbp->Config('os_wxapp_one')->appid; ?>" placeholder="请填写小程序的AppID" />
                         </td>
                     </tr>
                     <tr>
-                        <td>首页过滤分类</td>
+                        <td>Secret</td>
                         <td>
-                            <input name="filter" type="text" class="edit-input" value="<?php echo $zbp->Config('os_wxapp_one')->filter; ?>" placeholder="填写分类的ID，用英文逗号分隔" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>首页过滤文章</td>
-                        <td>
-                            <input name="filter_art" type="text" class="edit-input" value="<?php echo $zbp->Config('os_wxapp_one')->filter_art; ?>" placeholder="填写文章的ID，用英文逗号分隔" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>分类阅读中心</td>
-                        <td>
-                            <input name="cates" type="text" class="edit-input" value="<?php echo $zbp->Config('os_wxapp_one')->cates; ?>" placeholder="填写分类的ID，用英文逗号分隔" />
+                            <input name="secret" type="text" class="edit-input" value="<?php echo $zbp->Config('os_wxapp_one')->secret; ?>" placeholder="请填写小程序的授权Secret" />
                         </td>
                     </tr>
                 </tbody>

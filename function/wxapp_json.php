@@ -271,13 +271,13 @@ function os_wxapp_one_JSON_SwiperToJson($item) {
             $data->route = null;
         break;
         case 'article':
-            $data->route = "/pages/article/index?id="+$item->Related;
+            $data->route = "/pages/article/index?id=".$item->Related;
         break;
         case 'page':
-            $data->route = "/pages/page/index?id="+$item->Related;
+            $data->route = "/pages/page/index?id=".$item->Related;
         break;
         case 'search':
-            $data->route = "/pages/search/index?word="+$item->Related;
+            $data->route = "/pages/search/index?word=".$item->Related;
         break;
     }
 

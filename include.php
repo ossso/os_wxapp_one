@@ -16,6 +16,20 @@ function ActivePlugin_os_wxapp_one() {
     Add_Filter_Plugin('Filter_Plugin_Cmd_Begin','os_wxapp_one_WatchCmdApi');
 }
 
+function os_wxapp_one_SubMenu($id){
+
+	$arySubMenu = array(
+		0 => array('内容设置', 'main', 'left', false),
+		1 => array('Swiper设置', 'swiper', 'left', false),
+		2 => array('插件设置', 'set', 'left', false),
+		3 => array('配置帮助', 'https://www.os369.com/app/item/os_wxapp_one#help', 'right', true),
+	);
+
+	foreach($arySubMenu as $k => $v){
+		echo '<a href="./'.$v[1].'.php" '.($v[3]==true?'target="_blank"':'').'><span class="m-'.$v[2].' '.($id==$k?'m-now':'').'">'.$v[0].'</span></a>';
+	}
+}
+
 function InstallPlugin_os_wxapp_one() {
     os_wxapp_one_CreateTable();
 }
