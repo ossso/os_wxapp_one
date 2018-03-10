@@ -293,6 +293,9 @@ function os_wxapp_one_APICateList(&$json = []) {
                 $w[] = array("<>", "cate_ID", abs($v));
             }
         }
+        if (count($show) > 0) {
+            $w[] = array("IN", "cate_ID", $show);
+        }
     }
 
     $cates = $zbp->GetCategoryList(null, $w, array("cate_Order" => "ASC"));
@@ -309,7 +312,7 @@ function os_wxapp_one_APICateList(&$json = []) {
 }
 
 /**
- * 分类列表
+ * 获取文章实例
  */
 function os_wxapp_one_APIArticle(&$json = []) {
     global $zbp;
@@ -336,7 +339,7 @@ function os_wxapp_one_APIArticle(&$json = []) {
 }
 
 /**
- * 分类列表
+ * 获取单页实例
  */
 function os_wxapp_one_APIPage(&$json = []) {
     global $zbp;
@@ -363,7 +366,7 @@ function os_wxapp_one_APIPage(&$json = []) {
 }
 
 /**
- * 分类列表
+ * 获取留言实例
  */
 function os_wxapp_one_APIComment(&$json = []) {
     global $zbp;
