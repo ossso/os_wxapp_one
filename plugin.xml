@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin version="php">
 <id>os_wxapp_one</id>
-<name>微信小程序 - one</name>
-<url>https://www.os369.com/app/os_wxapp_one</url>
-<note>微信小程序 - one</note>
-<description>微信小程序 - one</description>
+<name>微信小程序 ONE</name>
+<url>https://www.os369.com/app/item/os_wxapp_one</url>
+<note>ZBlogPHP免费的微信小程序ONE</note>
+<description>v1.180312</description>
 <path>main.php</path>
 <include>include.php</include>
 <level>1</level>
@@ -21,7 +21,7 @@
 <adapted>150101</adapted>
 <version>1.0</version>
 <pubdate>2018-03-07</pubdate>
-<modified>2018-03-07</modified>
+<modified>2018-03-12</modified>
 <price>0</price>
 <phpver>5.4</phpver>
 <advanced>
