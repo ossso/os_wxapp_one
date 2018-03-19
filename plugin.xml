@@ -3,8 +3,9 @@
 <id>os_wxapp_one</id>
 <name>微信小程序 ONE</name>
 <url>https://www.os369.com/app/item/os_wxapp_one</url>
-<note>ZBlogPHP免费的微信小程序ONE</note>
-<description>v1.180312</description>
+<note>ZBlogPHP的免费微信小程序ONE</note>
+<description>v1.180312 发布
+v1.180319 更新，过滤遗漏</description>
 <path>main.php</path>
 <include>include.php</include>
 <level>1</level>
@@ -18,10 +19,10 @@
   <email></email>
   <url></url>
 </source>
-<adapted>150101</adapted>
-<version>1.0</version>
+<adapted>151740</adapted>
+<version>1.1</version>
 <pubdate>2018-03-07</pubdate>
-<modified>2018-03-12</modified>
+<modified>2018-03-19</modified>
 <price>0</price>
 <phpver>5.4</phpver>
 <advanced>
