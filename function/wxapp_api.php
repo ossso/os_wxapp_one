@@ -149,7 +149,7 @@ function os_wxapp_one_APIHome(&$json = []) {
         }
     }
 
-    $result = os_wxapp_one_JSON_GetArticleList(10, null, $page, $filter, $filter_art);
+    $result = os_wxapp_one_JSON_GetArticleList(10, null, $page, null, $filter, $filter_art);
 
     // 首页加载其它内容
     if ($page == 1) {

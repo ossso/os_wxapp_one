@@ -3,7 +3,7 @@
 /**
  * 获取文章列表
  */
-function os_wxapp_one_JSON_GetArticleList($num = 10, $cateid = null, $page = 1, $hasSubcate = false) {
+function os_wxapp_one_JSON_GetArticleList($num = 10, $cateid = null, $page = 1, $hasSubcate = false, $filter = [], $filter_art = []) {
     global $zbp;
 
     $data = (Object) array();
@@ -12,6 +12,13 @@ function os_wxapp_one_JSON_GetArticleList($num = 10, $cateid = null, $page = 1, 
     $w = array();
     $w[] = array('=', 'log_Status', '0');
     $w[] = array('=', 'log_Type', '0');
+
+    if (count($filter) > 0) {
+        $w = array_merge($w, $filter);
+    }
+    if (count($filter_art) > 0) {
+        $w = array_merge($w, $filter_art);
+    }
 
     if (isset($cateid)) {
         $cates = array();
