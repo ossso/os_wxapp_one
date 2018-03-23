@@ -7,7 +7,7 @@
  */
 
 
-include_once "errorCode.php";
+include_once __DIR__ . "/errorCode.php";
 
 
 class WXBizDataCrypt
@@ -38,13 +38,13 @@ class WXBizDataCrypt
 	public function decryptData( $encryptedData, $iv, &$data )
 	{
 		if (strlen($this->sessionKey) != 24) {
-			return ErrorCode::$IllegalAesKey;
+			return WXAPPErrorCode::$IllegalAesKey;
 		}
 		$aesKey=base64_decode($this->sessionKey);
 
-        
+
 		if (strlen($iv) != 24) {
-			return ErrorCode::$IllegalIv;
+			return WXAPPErrorCode::$IllegalIv;
 		}
 		$aesIV=base64_decode($iv);
 
@@ -55,15 +55,14 @@ class WXBizDataCrypt
 		$dataObj=json_decode( $result );
 		if( $dataObj  == NULL )
 		{
-			return ErrorCode::$IllegalBuffer;
+			return WXAPPErrorCode::$IllegalBuffer;
 		}
 		if( $dataObj->watermark->appid != $this->appid )
 		{
-			return ErrorCode::$IllegalBuffer;
+			return WXAPPErrorCode::$IllegalBuffer;
 		}
 		$data = $result;
-		return ErrorCode::$OK;
+		return WXAPPErrorCode::$OK;
 	}
 
 }
-

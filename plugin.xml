@@ -5,7 +5,9 @@
 <url>https://www.os369.com/app/item/os_wxapp_one</url>
 <note>ZBlogPHP的免费微信小程序ONE</note>
 <description>v1.180312 发布
-v1.180319 更新，过滤遗漏</description>
+v1.180319 更新，过滤遗漏
+v1.180323 更新，修改报错类名，避免冲突
+</description>
 <path>main.php</path>
 <include>include.php</include>
 <level>1</level>
@@ -22,7 +24,7 @@ v1.180319 更新，过滤遗漏</description>
 <adapted>151740</adapted>
 <version>1.1</version>
 <pubdate>2018-03-07</pubdate>
-<modified>2018-03-19</modified>
+<modified>2018-03-23</modified>
 <price>0</price>
 <phpver>5.4</phpver>
 <advanced>

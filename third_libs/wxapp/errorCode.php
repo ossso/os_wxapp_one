@@ -11,7 +11,7 @@
  *    <li>-41016: base64解密失败</li>
  * </ul>
  */
-class ErrorCode
+class WXAPPErrorCode
 {
 	public static $OK = 0;
 	public static $IllegalAesKey = -41001;
