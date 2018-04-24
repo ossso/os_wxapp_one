@@ -138,6 +138,10 @@ function os_wxapp_one_APIHome(&$json = []) {
         $list = explode(",", $zbp->Config('os_wxapp_one')->filter);
         foreach ($list as $id) {
             $filter[] = array("<>", "log_CateID", $id);
+            $childs = os_wxapp_one_Event_GetCategoryChilds($id);
+            foreach ($childs as $item) {
+                $filter[] = array("<>", "log_CateID", $item->ID);
+            }
         }
     }
     // 首页过滤文章

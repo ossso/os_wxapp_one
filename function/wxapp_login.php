@@ -38,6 +38,7 @@ function os_wxapp_one_CheckSession(&$json = []) {
         $mem->Avatar = $wxUser->Avatar;
         $mem->Metas->os_wxapp_avatar = $wxUser->Avatar;
     }
+    $zbp->user = $mem;
     return $mem;
 }
 

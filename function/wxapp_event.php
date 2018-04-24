@@ -149,3 +149,25 @@ function os_wxapp_one_EventUnBindUser() {
 
     return true;
 }
+
+/**
+ * 输出子分类
+ */
+function os_wxapp_one_Event_GetCategoryChilds($id) {
+    global $zbp;
+    $result = $zbp->GetCategoryList(
+        array('*'),
+        array(
+            array('=', 'cate_ParentID', $id)
+        )
+    );
+
+    $childList = array();
+    foreach ($result as $item) {
+        $childs = os_wxapp_one_Event_GetCategoryChilds($item->ID);
+        $childList = array_merge($childList, $childs);
+    }
+    $result = array_merge($result, $childList);
+
+    return $result;
+}
