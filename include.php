@@ -14,6 +14,7 @@ function ActivePlugin_os_wxapp_one() {
     global $zbp;
     Add_Filter_Plugin('Filter_Plugin_ViewAuto_Begin','os_wxapp_one_WatchApi');
     Add_Filter_Plugin('Filter_Plugin_Cmd_Begin','os_wxapp_one_WatchCmdApi');
+    Add_Filter_Plugin('Filter_Plugin_PostArticle_Core','os_wxapp_one_Event_PostArticleCore');
 }
 
 function os_wxapp_one_SubMenu($id){

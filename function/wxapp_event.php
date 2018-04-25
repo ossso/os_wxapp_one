@@ -46,6 +46,21 @@ function os_wxapp_one_Event_GetArticleCover($article, $num = 1) {
 }
 
 /**
+ * 更新文章的图片到缩略图
+ */
+function os_wxapp_one_Event_PostArticleCore(&$article) {
+    global $zbp;
+    $pattern = "/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/i";
+    $content = $article->Content;
+    preg_match_all($pattern, $content, $matchContent);
+
+    if(isset($matchContent[1][0])){
+        $article->Metas->os_wxapp_images = implode(",", $matchContent[1]);
+        $article->Metas->os_wxapp_images_count = count($matchContent[1]);
+    }
+}
+
+/**
  * 登录/注册小程序用户
  */
 function os_wxapp_one_Event_wxappLogin($data, $sessionKey) {
