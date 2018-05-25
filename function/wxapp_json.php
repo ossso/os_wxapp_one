@@ -150,6 +150,8 @@ function os_wxapp_one_JSON_PostToJson($item, $hasContent = false) {
     unset($data->Tag);
     unset($data->Template);
 
+    $data->Url = str_replace('{#ZC_BLOG_HOST#}', $zbp->host, $item->Url);
+
     return $data;
 }
 

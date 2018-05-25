@@ -9,6 +9,7 @@ v1.180319 更新，过滤遗漏
 v1.180323 更新，修改报错类名，避免冲突
 v1.180424 修正一个登录验证权限问题，首页子分类过滤添加；
 v1.180425 修正文章缩略图BUG；
+v1.180525 新增文章链接的输出；
 </description>
 <path>main.php</path>
 <include>include.php</include>
@@ -24,9 +25,9 @@ v1.180425 修正文章缩略图BUG；
   <url></url>
 </source>
 <adapted>151740</adapted>
-<version>1.3</version>
+<version>1.4</version>
 <pubdate>2018-03-07</pubdate>
-<modified>2018-04-25</modified>
+<modified>2018-05-25</modified>
 <price>0</price>
 <phpver>5.3</phpver>
 <advanced>
