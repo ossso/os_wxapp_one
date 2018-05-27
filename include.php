@@ -9,9 +9,15 @@ RegisterPlugin("os_wxapp_one", "ActivePlugin_os_wxapp_one");
 /**
  * 注册接收处理指令
  */
-$GLOBALS['actions']['os_wxapi'] = 6;
 function ActivePlugin_os_wxapp_one() {
-    global $zbp;
+    global $zbp, $actions;
+    $actions['os_wxapi'] = 6;
+    // 注册插件的接口
+    /**
+     * API指令监听
+     */
+    DefinePluginFilter('Filter_Plugin_OSWXAppONE_API_Command_Watch');
+
     Add_Filter_Plugin('Filter_Plugin_ViewAuto_Begin','os_wxapp_one_WatchApi');
     Add_Filter_Plugin('Filter_Plugin_Cmd_Begin','os_wxapp_one_WatchCmdApi');
     Add_Filter_Plugin('Filter_Plugin_PostArticle_Core','os_wxapp_one_Event_PostArticleCore');

@@ -42,6 +42,13 @@ function os_wxapp_one_WatchApi($url) {
         break;
     }
 
+    /**
+     * 接口接入
+     */
+    foreach ($GLOBALS['hooks']['Filter_Plugin_OSWXAppONE_API_Command_Watch'] as $fpname => &$fpsignal) {
+        $fpreturn = $fpname($version, $type, $param, $json);
+    }
+
     echo json_encode($json);
     exit;
 }
@@ -68,6 +75,13 @@ function os_wxapp_one_WatchCmdApi() {
             $json['code'] = -1;
             $json['message'] = "未找到定义接口";
         break;
+    }
+
+    /**
+     * 接口接入
+     */
+    foreach ($GLOBALS['hooks']['Filter_Plugin_OSWXAppONE_API_Command_Watch'] as $fpname => &$fpsignal) {
+        $fpreturn = $fpname($version, $mode, null, $json);
     }
 
     echo json_encode($json);
