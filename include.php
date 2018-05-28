@@ -17,6 +17,12 @@ function ActivePlugin_os_wxapp_one() {
      * API指令监听
      */
     DefinePluginFilter('Filter_Plugin_OSWXAppONE_API_Command_Watch');
+    /**
+     * 数据对象转json
+     */
+    DefinePluginFilter('Filter_Plugin_OSWXAppONE_Post_To_Json');
+    DefinePluginFilter('Filter_Plugin_OSWXAppONE_Category_To_Json');
+    DefinePluginFilter('Filter_Plugin_OSWXAppONE_User_To_Json');
 
     Add_Filter_Plugin('Filter_Plugin_ViewAuto_Begin','os_wxapp_one_WatchApi');
     Add_Filter_Plugin('Filter_Plugin_Cmd_Begin','os_wxapp_one_WatchCmdApi');

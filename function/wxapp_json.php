@@ -126,15 +126,11 @@ function os_wxapp_one_JSON_PostToJson($item, $hasContent = false) {
     global $zbp;
     $data = json_decode($item->__toString());
 
-    $data->Metas = (Object) array();
-    $metas = $item->Meta;
-    $metas = unserialize($metas);
-    if ($metas) {
-        $metas = (array) $metas;
-        foreach ($metas as $k => $v) {
-            $data->Metas->$k = $v;
-            $data->Metas->$k = str_replace('{#ZC_BLOG_HOST#}', $zbp->host, $data->Metas->$k);
-        }
+    /**
+     * 接口接入
+     */
+    foreach ($GLOBALS['hooks']['Filter_Plugin_OSWXAppONE_Post_To_Json'] as $fpname => &$fpsignal) {
+        $fpreturn = $fpname($data, $item, $hasContent);
     }
 
     if ($item->Type == 0) {
@@ -149,7 +145,6 @@ function os_wxapp_one_JSON_PostToJson($item, $hasContent = false) {
     unset($data->Meta);
     unset($data->Tag);
     unset($data->Template);
-
     $data->Url = str_replace('{#ZC_BLOG_HOST#}', $zbp->host, $item->Url);
 
     return $data;
@@ -162,20 +157,15 @@ function os_wxapp_one_JSON_PostToJson($item, $hasContent = false) {
 function os_wxapp_one_JSON_CateToJson($item) {
     global $zbp;
     $data = json_decode($item->__toString());
-    $data->Metas = (Object) array();
-    $metas = $item->Meta;
-    $metas = unserialize($metas);
-    if ($metas) {
-        $metas = (array) $metas;
-        foreach ($metas as $k => $v) {
-            $data->Metas->$k = $v;
-            $data->Metas->$k = str_replace('{#ZC_BLOG_HOST#}', $zbp->host, $data->Metas->$k);
-        }
+    /**
+     * 接口接入
+     */
+    foreach ($GLOBALS['hooks']['Filter_Plugin_OSWXAppONE_Category_To_Json'] as $fpname => &$fpsignal) {
+        $fpreturn = $fpname($data, $item);
     }
     unset($data->Template);
     unset($data->LogTemplate);
     unset($data->Meta);
-
     return $data;
 }
 /**
@@ -185,15 +175,11 @@ function os_wxapp_one_JSON_CateToJson($item) {
 function os_wxapp_one_JSON_UserToJson($item, $hasPrivacy = false) {
     global $zbp;
     $data = json_decode($item->__toString());
-    $data->Metas = (Object) array();
-    $metas = $item->Meta;
-    $metas = unserialize($metas);
-    if ($metas) {
-        $metas = (array) $metas;
-        foreach ($metas as $k => $v) {
-            $data->Metas->$k = $v;
-            $data->Metas->$k = str_replace('{#ZC_BLOG_HOST#}', $zbp->host, $data->Metas->$k);
-        }
+    /**
+     * 接口接入
+     */
+    foreach ($GLOBALS['hooks']['Filter_Plugin_OSWXAppONE_User_To_Json'] as $fpname => &$fpsignal) {
+        $fpreturn = $fpname($data, $item, $hasPrivacy);
     }
     unset($data->Meta);
     unset($data->Guid);
@@ -202,10 +188,15 @@ function os_wxapp_one_JSON_UserToJson($item, $hasPrivacy = false) {
     if (!$hasPrivacy) {
         unset($data->IP);
         unset($data->Agent);
-        unset($data->Email);
         unset($data->Name);
+        unset($data->HomePage);
+        unset($data->Email);
         unset($data->PostTime);
+        unset($data->Intro);
+        unset($data->Articles);
+        unset($data->Pages);
         unset($data->Uploads);
+        unset($data->Comments);
         // unset($data->Level);
         unset($data->Status);
     }
@@ -218,7 +209,6 @@ function os_wxapp_one_JSON_UserToJson($item, $hasPrivacy = false) {
     } else {
         $data->Avatar = $item->Avatar;
     }
-
     return $data;
 }
 
@@ -229,23 +219,15 @@ function os_wxapp_one_JSON_UserToJson($item, $hasPrivacy = false) {
 function os_wxapp_one_JSON_CommentToJson($item, $hasPrivacy = false) {
     global $zbp;
     $data = json_decode($item->__toString());
-    $data->Metas = (Object) array();
-    $metas = $item->Meta;
-    $metas = unserialize($metas);
-    if ($metas) {
-        $metas = (array) $metas;
-        foreach ($metas as $k => $v) {
-            $data->Metas->$k = $v;
-            $data->Metas->$k = str_replace('{#ZC_BLOG_HOST#}', $zbp->host, $data->Metas->$k);
-        }
-    }
+    unset($data->HomePage);
+    unset($data->LogID);
+    unset($data->Post);
     unset($data->Meta);
     if (!$hasPrivacy) {
         unset($data->IP);
         unset($data->Agent);
         unset($data->Email);
     }
-
     $data->Author = os_wxapp_one_JSON_UserToJson($item->Author);
     $data->Post = os_wxapp_one_JSON_PostToJson($item->Post);
 
@@ -254,7 +236,6 @@ function os_wxapp_one_JSON_CommentToJson($item, $hasPrivacy = false) {
         $parentItem = $zbp->GetCommentByID($data->ParentID);
         $data->Parents = os_wxapp_one_JSON_CommentToJson($parentItem, $hasPrivacy);
     }
-
     return $data;
 }
 
@@ -263,18 +244,7 @@ function os_wxapp_one_JSON_CommentToJson($item, $hasPrivacy = false) {
  */
 function os_wxapp_one_JSON_SwiperToJson($item) {
     $data = json_decode($item->__toString());
-    $data->Metas = (Object) array();
-    $metas = $item->Meta;
-    $metas = unserialize($metas);
-    if ($metas) {
-        $metas = (array) $metas;
-        foreach ($metas as $k => $v) {
-            $data->Metas->$k = $v;
-            $data->Metas->$k = str_replace('{#ZC_BLOG_HOST#}', $zbp->host, $data->Metas->$k);
-        }
-    }
     unset($data->Meta);
-
     switch ($item->Type) {
         case 'normal':
             $data->route = null;
